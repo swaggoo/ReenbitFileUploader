@@ -1,5 +1,6 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Core;
 using Core.Interfaces;
@@ -15,7 +16,7 @@ public class FileService : IFileService
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task UploadAsync(IFormFile file)
+    public async Task UploadFileWithEmailMetadataAsync(IFormFile file, string email)
     {
         BlobContainerClient containerClient = _blobServiceClient
             .GetBlobContainerClient(Constants.BlobContainerName);
@@ -24,11 +25,14 @@ public class FileService : IFileService
 
         using (var stream = file.OpenReadStream())
         {
-            await blobClient.UploadAsync(stream, true);
+            await blobClient.UploadAsync(stream, new BlobUploadOptions()
+            {
+                Metadata = GetEmailAndSASTokenAsMetadata(email)
+            });
         }
     }
 
-    public string GenerateSasToken(string blobName)
+    public string GenerateSASToken(string blobName)
     {
         var blobSasBuilder = new BlobSasBuilder()
         {
@@ -51,5 +55,13 @@ public class FileService : IFileService
         string sasToken = sasQueryParameters.ToString();
 
         return sasToken;
+    }
+
+    private Dictionary<string, string> GetEmailAndSASTokenAsMetadata(string email)
+    {
+        return new Dictionary<string, string>()
+        {
+            { "Email", email },
+        };
     }
 }

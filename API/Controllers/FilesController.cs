@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using Azure;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,18 @@ public class FilesController : BaseController
     [HttpPost]
     public async Task<ActionResult> Upload(IFormFile file)
     {
-        await _fileService.UploadAsync(file);
-        var sasToken = _fileService.GenerateSasToken(file.FileName);
+        var email = "nazarnyrka00@gmail.com";
 
-        return Ok(sasToken);
+        try
+        {
+            await _fileService.UploadFileWithEmailMetadataAsync(file, email);
+            var sasToken = _fileService.GenerateSASToken(file.FileName);
+
+            return Ok(sasToken);
+        }
+        catch (RequestFailedException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 }
