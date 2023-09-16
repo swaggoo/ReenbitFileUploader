@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{BE24D560-5866-43C3-A4EE-ACB02A23E546}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSendFunction", "EmailSendFunction\EmailSendFunction.csproj", "{F963873C-5777-490E-9944-A92C58DF2C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSendFunction", "EmailSendFunction\EmailSendFunction.csproj", "{F963873C-5777-490E-9944-A92C58DF2C0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{BCB5D1BD-D21D-43C7-B742-EBFDC8FD812D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F963873C-5777-490E-9944-A92C58DF2C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F963873C-5777-490E-9944-A92C58DF2C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F963873C-5777-490E-9944-A92C58DF2C0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCB5D1BD-D21D-43C7-B742-EBFDC8FD812D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCB5D1BD-D21D-43C7-B742-EBFDC8FD812D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCB5D1BD-D21D-43C7-B742-EBFDC8FD812D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCB5D1BD-D21D-43C7-B742-EBFDC8FD812D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

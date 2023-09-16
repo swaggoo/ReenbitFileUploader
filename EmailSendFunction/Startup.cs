@@ -1,4 +1,4 @@
-﻿using EmailSendFunction.Services;
+﻿using EmailSend.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 

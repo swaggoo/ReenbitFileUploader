@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using EmailSendFunction.Services;
+using EmailSend.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
-namespace EmailSendFunction
+namespace EmailSend
 {
     [StorageAccount("AzureWebJobsStorage")]
-    public class EmailSendFunction
+    public class EmailSenderFunction
     {
         private readonly IEmailSender _emailSender;
 
-        public EmailSendFunction(IEmailSender emailSender)
+        public EmailSenderFunction(IEmailSender emailSender)
         {
             _emailSender = emailSender;
         }

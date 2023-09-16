@@ -1,5 +1,4 @@
-﻿using API.DTOs;
-using Azure;
+﻿using Azure;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +17,15 @@ public class FilesController : BaseController
     public async Task<ActionResult> Upload(IFormFile file)
     {
         var email = "nazarnyrka00@gmail.com";
+        if (file == null)
+        {
+            return BadRequest("Upload a correct file");
+        }
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return BadRequest("The email address is in the incorrect format");
+        }
 
         try
         {

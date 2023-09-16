@@ -1,9 +1,8 @@
-﻿using EmailSendFunction.Utilities;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 
-namespace EmailSendFunction.Services;
+namespace EmailSend.Services;
 public class EmailSender : IEmailSender
 {
     public void SendEmail(string email, string fileName)
