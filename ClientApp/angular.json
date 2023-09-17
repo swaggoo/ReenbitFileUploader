@@ -25,8 +25,10 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/ngx-spinner/animations/square-jelly-box.css",
               "src/styles.css",
               "bootswatch/dist/lux/bootstrap.min.css"
+              
             ],
             "scripts": [
               "bootstrap/dist/js/bootstrap.min.js"

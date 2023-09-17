@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from './nav/nav.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 
 @NgModule({
   declarations: [
-    NavComponent
+    NavComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    NgxSpinnerModule
   ],
   exports: [
-    NavComponent
+    NavComponent,
+    NgxSpinnerModule
   ]
 })
 export class CoreModule { }
