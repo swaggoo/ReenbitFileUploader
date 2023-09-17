@@ -5,5 +5,7 @@ namespace Core.Interfaces;
 public interface IFileService
 {
     Task UploadFileWithEmailMetadataAsync(IFormFile file, string email);
-    string GenerateSASToken(string blobName);
+    string GenerateSASToken(string fileName);
+    string GenerateFileAccessUrl(string fileName);
+
 }

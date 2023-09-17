@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using API.DTOs;
+using Azure;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,29 +15,27 @@ public class FilesController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> Upload(IFormFile file)
+    public async Task<ActionResult<FileToReturnDto>> Upload([FromForm] FileDto fileDto)
     {
-        var email = "nazarnyrka00@gmail.com";
-        if (file == null)
-        {
-            return BadRequest("Upload a correct file");
-        }
-
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            return BadRequest("The email address is in the incorrect format");
-        }
+        if (!IsFileValid(fileDto.File)) return BadRequest("File is not valid"); 
 
         try
         {
-            await _fileService.UploadFileWithEmailMetadataAsync(file, email);
-            var sasToken = _fileService.GenerateSASToken(file.FileName);
+            await _fileService.UploadFileWithEmailMetadataAsync(fileDto.File, fileDto.Email);
+            var accessUrl = _fileService.GenerateFileAccessUrl(fileDto.File.FileName);
 
-            return Ok(sasToken);
+            var fileToReturnDto = new FileToReturnDto
+            {
+                Url = accessUrl
+            };
+
+            return Ok(fileToReturnDto);
         }
         catch (RequestFailedException ex)
         {
-            return StatusCode(500, ex.Message);
+            return BadRequest(ex.Message);
         }
     }
+
+    private bool IsFileValid(IFormFile file) => file != null && Path.GetExtension(file.FileName) == ".docx";
 }

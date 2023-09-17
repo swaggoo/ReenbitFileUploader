@@ -23,6 +23,7 @@ public class FileService : IFileService
 
         var blobClient = containerClient.GetBlobClient(file.FileName);
 
+
         using (var stream = file.OpenReadStream())
         {
             await blobClient.UploadAsync(stream, new BlobUploadOptions()
@@ -32,12 +33,12 @@ public class FileService : IFileService
         }
     }
 
-    public string GenerateSASToken(string blobName)
+    public string GenerateSASToken(string fileName)
     {
         var blobSasBuilder = new BlobSasBuilder()
         {
             BlobContainerName = Constants.BlobContainerName,
-            BlobName = blobName,
+            BlobName = fileName,
             Resource = "b",
             StartsOn = DateTimeOffset.UtcNow,
             ExpiresOn = DateTimeOffset.UtcNow.AddHours(1),
@@ -56,6 +57,15 @@ public class FileService : IFileService
 
         return sasToken;
     }
+
+    public string GenerateFileAccessUrl(string fileName)
+    {
+        var sasToken = GenerateSASToken(fileName);
+        var accessUrl = $"https://{Constants.StorageAccountName}.blob.core.windows.net/{Constants.BlobContainerName}/{fileName}?{sasToken}";
+
+        return accessUrl;
+    }
+
 
     private Dictionary<string, string> GetEmailAndSASTokenAsMetadata(string email)
     {

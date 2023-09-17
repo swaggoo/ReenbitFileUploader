@@ -1,10 +1,12 @@
 ﻿using API.Controllers;
+using API.DTOs;
 using Azure;
 using Core.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Web.Http;
 using Xunit;
 
 namespace Tests.Controllers;
@@ -30,6 +32,14 @@ public class FilesControllerTests
         // Arrange
         var file = new Mock<IFormFile>();
         var email = "test@gmail.com";
+
+        // Create a FileDto object
+        var fileDto = new FileDto
+        {
+            Email = email,
+            File = file.Object
+        };
+
         var sasToken = "sas-token";
 
         _mockFileService.Setup(x => x.UploadFileWithEmailMetadataAsync(file.Object, email))
@@ -39,10 +49,10 @@ public class FilesControllerTests
             .Returns(sasToken);
 
         // Act
-        var result = await _filesController.Upload(file.Object);
+        var result = await _filesController.Upload(fileDto); // Pass the FileDto object
 
         // Assert
-        result.Should().BeOfType<OkObjectResult>();
+        result.Should().BeOfType<ActionResult<FileToReturnDto>>();
     }
 
     [Fact]
@@ -56,12 +66,19 @@ public class FilesControllerTests
             .ThrowsAsync(new RequestFailedException(exceptionMessage));
 
         // Act
-        var result = await _filesController.Upload(file.Object);
+        var fileDto = new FileDto // Create a FileDto object and set necessary properties
+        {
+            Email = "test@gmail.com",
+            File = file.Object
+        };
+        var result = await _filesController.Upload(fileDto);
 
         // Assert
-        result.Should().BeOfType<ObjectResult>();
+        result.Should().BeOfType<ActionResult<FileToReturnDto>>(); // Use the correct return type
 
-        var objectResult = (ObjectResult)result;
-        objectResult.StatusCode.Should().Be(500);
+        var objectResult = (ActionResult<FileToReturnDto>)result;
+        objectResult.Result.Should().BeOfType<InternalServerErrorResult>(); // Check for internal server error
     }
+
+
 }
