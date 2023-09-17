@@ -17,24 +17,20 @@ public class FilesController : BaseController
     [HttpPost]
     public async Task<ActionResult<FileToReturnDto>> Upload([FromForm] FileDto fileDto)
     {
-        if (!IsFileValid(fileDto.File)) return BadRequest("File is not valid"); 
-
-        try
+        if (!IsFileValid(fileDto.File))
         {
-            await _fileService.UploadFileWithEmailMetadataAsync(fileDto.File, fileDto.Email);
-            var accessUrl = _fileService.GenerateFileAccessUrl(fileDto.File.FileName);
-
-            var fileToReturnDto = new FileToReturnDto
-            {
-                Url = accessUrl
-            };
-
-            return Ok(fileToReturnDto);
+            return BadRequest("File is not valid");
         }
-        catch (RequestFailedException ex)
+
+        await _fileService.UploadFileWithEmailMetadataAsync(fileDto.File, fileDto.Email);
+        var accessUrl = _fileService.GenerateFileAccessUrl(fileDto.File.FileName);
+
+        var fileToReturnDto = new FileToReturnDto
         {
-            return BadRequest(ex.Message);
-        }
+            Url = accessUrl
+        };
+
+        return Ok(fileToReturnDto);
     }
 
     private bool IsFileValid(IFormFile file) => file != null && Path.GetExtension(file.FileName) == ".docx";

@@ -6,79 +6,80 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Net;
 using System.Web.Http;
 using Xunit;
 
 namespace Tests.Controllers;
 public class FilesControllerTests
 {
-    private readonly Mock<IFileService> _mockFileService;
+    private readonly Mock<IFileService> _fileServiceMock;
     private readonly FilesController _filesController;
 
     public FilesControllerTests()
     {
         #region Dependencies
-        _mockFileService = new Mock<IFileService>();
+        _fileServiceMock = new Mock<IFileService>();
         #endregion
 
         #region SUT
-        _filesController = new FilesController(_mockFileService.Object);
+        _filesController = new FilesController(_fileServiceMock.Object);
         #endregion
     }
 
     [Fact]
-    public async Task Upload_Should_ReturnOkResult_When_FileIsUploadedSuccessfully()
+    public async Task Upload_ReturnsOk_WithFileToReturnDto_WithAccessUrl()
     {
-        // Arrange
-        var file = new Mock<IFormFile>();
-        var email = "test@gmail.com";
+        var mockFile = new Mock<IFormFile>();
+        mockFile.Setup(f => f.FileName).Returns("example.docx");
 
-        // Create a FileDto object
+        // Arrange
         var fileDto = new FileDto
         {
-            Email = email,
-            File = file.Object
+            File = mockFile.Object,
+            Email = "test@example.com"
         };
 
-        var sasToken = "sas-token";
-
-        _mockFileService.Setup(x => x.UploadFileWithEmailMetadataAsync(file.Object, email))
-            .Returns(Task.CompletedTask);
-
-        _mockFileService.Setup(x => x.GenerateSASToken(file.Object.FileName))
-            .Returns(sasToken);
+        var expectedAccessUrl = "https://example.com/file.txt";
+        _fileServiceMock.Setup(m => m.GenerateFileAccessUrl(fileDto.File.FileName)).Returns(expectedAccessUrl);
 
         // Act
-        var result = await _filesController.Upload(fileDto); // Pass the FileDto object
+        var actionResult = await _filesController.Upload(fileDto);
 
         // Assert
-        result.Should().BeOfType<ActionResult<FileToReturnDto>>();
+        var result = actionResult.Result as OkObjectResult;
+        result.Should().NotBeNull();
+        result!.Value.Should().BeOfType<FileToReturnDto>();
+
+        var fileToReturnDto = result.Value as FileToReturnDto;
+        fileToReturnDto.Should().NotBeNull();
+        fileToReturnDto!.Url.Should().Be(expectedAccessUrl);
     }
 
     [Fact]
-    public async Task Upload_Should_ReturnInternalServerError_When_FileUploadFails()
+    public async Task Upload_ReturnsBadRequest_IfFileIsNotValid()
     {
         // Arrange
-        var file = new Mock<IFormFile>();
-        var exceptionMessage = "File upload failed.";
-
-        _mockFileService.Setup(x => x.UploadFileWithEmailMetadataAsync(file.Object, It.IsAny<string>()))
-            .ThrowsAsync(new RequestFailedException(exceptionMessage));
+        var fileDto = new FileDto
+        {
+            File = null
+        };
 
         // Act
-        var fileDto = new FileDto // Create a FileDto object and set necessary properties
-        {
-            Email = "test@gmail.com",
-            File = file.Object
-        };
-        var result = await _filesController.Upload(fileDto);
+        var actionResult = await _filesController.Upload(fileDto);
 
         // Assert
-        result.Should().BeOfType<ActionResult<FileToReturnDto>>(); // Use the correct return type
-
-        var objectResult = (ActionResult<FileToReturnDto>)result;
-        objectResult.Result.Should().BeOfType<InternalServerErrorResult>(); // Check for internal server error
+        var result = actionResult.Result as BadRequestObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be(400);
+        result.Value.Should().Be("File is not valid");
     }
+
+
+
+
+
+
 
 
 }
