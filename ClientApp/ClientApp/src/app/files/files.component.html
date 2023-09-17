@@ -1,0 +1,31 @@
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-3">
+      <form [formGroup]="fileForm" (ngSubmit)="onSubmit()">
+        <div class="text-center mb-4">
+          <h1 class="mb-3">Upload a File</h1>
+        </div>
+  
+        <label class="col-form-label mt-4" for="email">Email: </label>
+        <input class="form-control" [placeholder]="'example@gmail.com'" id="email" type="text" formControlName="email">
+
+        <div class="form-group">
+            <label for="file" class="form-label mt-4">Select a file</label>
+            <input class="form-control" type="file" accept=".docx" (change)="handleFileInput($event)">
+        </div>
+  
+        <div class="d-grid">
+          <button
+            class="btn btn-primary mt-3"
+            type="submit"
+            [disabled]="loading"
+          >
+            Upload
+          </button>
+        </div>
+        <div class="form-group">
+          <label class="form-label mt-4">Access Url</label>
+          <textarea class="form-control" id="accessUrl" rows="5"></textarea>
+        </div>
+      </form>
+    </div>
+  </div>

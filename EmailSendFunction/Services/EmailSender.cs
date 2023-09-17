@@ -9,7 +9,7 @@ public class EmailSender : IEmailSender
     {
         var message = new MimeMessage();
 
-        message.From.Add(new MailboxAddress("", "docxsender.press@outlook.com"));
+        message.From.Add(new MailboxAddress("", "dawn.labadie@ethereal.email"));
         message.To.Add(new MailboxAddress("", email));
 
         message.Subject = "Your file uploaded to blob storage";
@@ -22,8 +22,8 @@ public class EmailSender : IEmailSender
         // Connect to the SMTP server and send the message
         using (var client = new SmtpClient())
         {
-            client.Connect("smtp.office365.com", 587, SecureSocketOptions.Auto);
-            client.Authenticate("docxsender.press@outlook.com", "yaofuomotrvxftel");
+            client.Connect("smtp-relay.brevo.com", 587, SecureSocketOptions.Auto);
+            client.Authenticate("nazarnyrka00@gmail.com", "LNBxgyrGMHTR7svh");
             client.Send(message);
             client.Disconnect(true);
         }
